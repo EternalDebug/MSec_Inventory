@@ -31,6 +31,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.sp
 import com.example.inventory.InventoryTopAppBar
 
 object SettingsDestination : NavigationDestination {
@@ -84,7 +85,7 @@ private fun SettingsDetailsBody(
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_medium))
     ){
         Row(){
-            Text(text = "Hide personal data ", color = MaterialTheme.colorScheme.onSurface)
+            Text(text = " Hide personal data     ", color = MaterialTheme.colorScheme.onSurface, fontSize = 20.sp)
             var checked by remember { mutableStateOf(viewModel.hideData()) }
             Switch(checked = checked, onCheckedChange = {
                 viewModel.switchHideData()
@@ -92,7 +93,7 @@ private fun SettingsDetailsBody(
             })
         }
         Row(){
-            Text(text = "Restrict sharing data ", color = MaterialTheme.colorScheme.onSurface)
+            Text(text = " Restrict sharing data  ", color = MaterialTheme.colorScheme.onSurface, fontSize = 20.sp)
             var checked by remember { mutableStateOf(viewModel.restrictedShare()) }
             Switch(checked = checked, onCheckedChange = {
                 viewModel.switchRestrictedShare()
@@ -101,7 +102,7 @@ private fun SettingsDetailsBody(
         }
         var checkSetDefault by remember { mutableStateOf(viewModel.setDefault()) }
         Row(){
-            Text(text = "Use default quantity ", color = MaterialTheme.colorScheme.onSurface)
+            Text(text = " Use default quantity   ", color = MaterialTheme.colorScheme.onSurface, fontSize = 20.sp)
             Switch(checked = checkSetDefault, onCheckedChange = {
                 viewModel.switchSetDefault()
                 checkSetDefault = it

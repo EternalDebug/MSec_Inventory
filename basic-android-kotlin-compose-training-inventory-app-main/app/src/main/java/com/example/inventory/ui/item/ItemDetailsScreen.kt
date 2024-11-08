@@ -243,7 +243,7 @@ fun ItemDetails(
             )
             ItemDetailsRow(
                 labelResID = R.string.agentName,
-                itemDetail = if (viewModel.hideData()) R.string.hidden_data.toString() else item.agentName,
+                itemDetail = if (viewModel.hideData()) "ДАННЫЕ УДАЛЕНЫ" else item.agentName,
                 modifier = Modifier.padding(
                     horizontal = dimensionResource(
                         id = R.dimen
@@ -253,7 +253,7 @@ fun ItemDetails(
             )
             ItemDetailsRow(
                 labelResID = R.string.agentMail,
-                itemDetail = item.agentMail,
+                itemDetail = if (viewModel.hideData()) "ДАННЫЕ УДАЛЕНЫ" else item.agentMail,
                 modifier = Modifier.padding(
                     horizontal = dimensionResource(
                         id = R.dimen
@@ -263,7 +263,7 @@ fun ItemDetails(
             )
             ItemDetailsRow(
                 labelResID = R.string.agentPhone,
-                itemDetail = item.agentPhone,
+                itemDetail = if (viewModel.hideData()) "LOST DATA" else item.agentPhone,
                 modifier = Modifier.padding(
                     horizontal = dimensionResource(
                         id = R.dimen

@@ -28,7 +28,7 @@ class SettingsRep {
         return (sharedPreferences.getString("restrictedShare", "") ?: return false) == "true"
     }
     fun switchRestrictedShare() {
-        sharedPreferences.edit().putString("isNoShare", (if(restrictedShare()) "false" else "true")).apply()
+        sharedPreferences.edit().putString("restrictedShare", (if(restrictedShare()) "false" else "true")).apply()
     }
 
 
