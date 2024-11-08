@@ -132,7 +132,8 @@ fun ItemDetailsScreen(
                     top = innerPadding.calculateTopPadding(),
                     end = innerPadding.calculateEndPadding(LocalLayoutDirection.current),
                 )
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(rememberScrollState()),
+            viewModel = viewModel
         )
     }
 }
@@ -143,7 +144,8 @@ private fun ItemDetailsBody(
     onSellItem: () -> Unit,
     shareItemButtonClicked: () -> Unit,
     onDelete: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: ItemDetailsViewModel
 ) {
     Column(
         modifier = modifier.padding(dimensionResource(id = R.dimen.padding_medium)),
@@ -151,7 +153,7 @@ private fun ItemDetailsBody(
     ) {
         var deleteConfirmationRequired by rememberSaveable { mutableStateOf(false) }
         ItemDetails(
-            item = itemDetailsUiState.itemDetails.toItem(), modifier = Modifier.fillMaxWidth()
+            item = itemDetailsUiState.itemDetails.toItem(), modifier = Modifier.fillMaxWidth(), viewModel = viewModel
         )
         Button(
             onClick = onSellItem,
@@ -166,7 +168,7 @@ private fun ItemDetailsBody(
             onClick = shareItemButtonClicked,
             modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.small,
-            enabled = true
+            enabled = !viewModel.restrictedShare()
         ) {
             Text(stringResource(R.string.share))
         }
@@ -194,7 +196,8 @@ private fun ItemDetailsBody(
 
 @Composable
 fun ItemDetails(
-    item: Item, modifier: Modifier = Modifier
+    item: Item, modifier: Modifier = Modifier,
+    viewModel: ItemDetailsViewModel
 ) {
     Card(
         modifier = modifier, colors = CardDefaults.cardColors(
@@ -240,7 +243,7 @@ fun ItemDetails(
             )
             ItemDetailsRow(
                 labelResID = R.string.agentName,
-                itemDetail = item.agentName,
+                itemDetail = if (viewModel.hideData()) R.string.hidden_data.toString() else item.agentName,
                 modifier = Modifier.padding(
                     horizontal = dimensionResource(
                         id = R.dimen
@@ -310,6 +313,6 @@ fun ItemDetailsScreenPreview() {
     InventoryTheme {
         ItemDetailsBody(ItemDetailsUiState(
             outOfStock = true, itemDetails = ItemDetails(1, "Pen", "$100", "10")
-        ), onSellItem = {}, onDelete = {}, shareItemButtonClicked = {})
+        ), onSellItem = {}, onDelete = {}, shareItemButtonClicked = {}, viewModel = viewModel(factory = AppViewModelProvider.Factory))
     }
 }

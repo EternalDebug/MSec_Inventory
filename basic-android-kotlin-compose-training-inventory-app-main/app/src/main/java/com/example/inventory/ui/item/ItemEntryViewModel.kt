@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.inventory.data.Item
 import com.example.inventory.data.ItemsRepository
+import com.example.inventory.data.SettingsRep
 import com.example.inventory.data.isValidEmail
 import com.example.inventory.data.isValidPhone
 import java.text.NumberFormat
@@ -30,7 +31,7 @@ import java.text.NumberFormat
  * ViewModel to validate and insert items in the Room database.
  */
 class ItemEntryViewModel(private val itemsRepository: ItemsRepository) : ViewModel() {
-
+    private  val settRep: SettingsRep = SettingsRep()
     /**
      * Holds current item ui state
      */
@@ -61,6 +62,9 @@ class ItemEntryViewModel(private val itemsRepository: ItemsRepository) : ViewMod
                     agentMail.isValidEmail() && agentPhone.isValidPhone()
         }
     }
+
+    fun setDefault(): Boolean { return settRep.setDefault()}
+    fun default(): Int { return settRep.default()}
 }
 
 /**

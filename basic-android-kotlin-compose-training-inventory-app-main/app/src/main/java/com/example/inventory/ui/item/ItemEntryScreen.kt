@@ -43,9 +43,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.inventory.InventoryTopAppBar
 import com.example.inventory.R
+import com.example.inventory.data.isValidEmail
+import com.example.inventory.data.isValidPhone
 import com.example.inventory.ui.AppViewModelProvider
 import com.example.inventory.ui.navigation.NavigationDestination
 import com.example.inventory.ui.theme.InventoryTheme
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import kotlinx.coroutines.launch
 import java.util.Currency
 import java.util.Locale
@@ -130,7 +136,8 @@ fun ItemInputForm(
     itemDetails: ItemDetails,
     modifier: Modifier = Modifier,
     onValueChange: (ItemDetails) -> Unit = {},
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    viewModel: ItemEntryViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     Column(
         modifier = modifier,
@@ -164,6 +171,11 @@ fun ItemInputForm(
             enabled = enabled,
             singleLine = true
         )
+        var start by remember { mutableStateOf(true) }
+        if (viewModel.setDefault() && start){
+            onValueChange(itemDetails.copy(quantity = viewModel.default().toString()))
+            start = false
+        }
         OutlinedTextField(
             value = itemDetails.quantity,
             onValueChange = { onValueChange(itemDetails.copy(quantity = it)) },
@@ -189,7 +201,8 @@ fun ItemInputForm(
             ),
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
-            singleLine = true
+            singleLine = true,
+            isError = itemDetails.agentName.isBlank()
         )
         OutlinedTextField(
             value = itemDetails.agentMail,
@@ -202,6 +215,7 @@ fun ItemInputForm(
             ),
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
+            isError = !itemDetails.agentMail.isValidEmail(),
             singleLine = true
         )
         OutlinedTextField(
@@ -215,6 +229,7 @@ fun ItemInputForm(
             ),
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
+            isError = !itemDetails.agentPhone.isValidPhone(),
             singleLine = true
         )
         if (enabled) {

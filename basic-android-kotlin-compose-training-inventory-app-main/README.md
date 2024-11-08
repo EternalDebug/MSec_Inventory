@@ -1,4 +1,8 @@
 Inventory app
+MSec Lab:
+2: completed 100%
+3: started 
+4: in query
 ==================================
 
 Solution code for Android Basics with Compose.

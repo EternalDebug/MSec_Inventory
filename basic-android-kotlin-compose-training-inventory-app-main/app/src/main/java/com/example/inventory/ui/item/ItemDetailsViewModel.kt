@@ -23,6 +23,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.inventory.data.Item
 import com.example.inventory.data.ItemsRepository
+import com.example.inventory.data.SettingsRep
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
@@ -39,6 +40,7 @@ class ItemDetailsViewModel(
 ) : ViewModel() {
 
     private val itemId: Int = checkNotNull(savedStateHandle[ItemDetailsDestination.itemIdArg])
+    private val settRep = SettingsRep()
 
     /**
      * Holds the item details ui state. The data is retrieved from [ItemsRepository] and mapped to
@@ -95,6 +97,9 @@ class ItemDetailsViewModel(
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
     }
+
+    fun hideData(): Boolean { return settRep.hideData()}
+    fun restrictedShare(): Boolean {return settRep.restrictedShare()}
 }
 
 /**

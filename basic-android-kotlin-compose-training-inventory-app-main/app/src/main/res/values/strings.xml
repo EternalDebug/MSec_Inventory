@@ -42,4 +42,7 @@
     <string name="share">Share</string>
     <string name="yes">Yes</string>
     <string name="required_fields">*required fields</string>
+    <string name="hidden_data">ДАННЫЕ УДАЛЕНЫ</string>
+    <string name="settings">Settings</string>
+
 </resources>
