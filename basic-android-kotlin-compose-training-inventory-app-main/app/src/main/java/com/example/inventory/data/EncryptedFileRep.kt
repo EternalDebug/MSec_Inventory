@@ -63,7 +63,7 @@ class EncryptedFileRep(val selectedUri: Uri) {
             ).build()
 
             selectedUri.let { appContext!!.contentResolver.openInputStream(it) }?.use{inp ->
-                encryptedFile.openFileOutput().use { out ->
+                file.outputStream().use { out ->
                     copyStream(inp, out)
                 }
             }
