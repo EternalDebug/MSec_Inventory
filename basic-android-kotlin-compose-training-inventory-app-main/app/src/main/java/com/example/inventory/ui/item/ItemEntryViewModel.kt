@@ -16,15 +16,19 @@
 
 package com.example.inventory.ui.item
 
+import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.inventory.data.EncryptedFileRep
 import com.example.inventory.data.Item
 import com.example.inventory.data.ItemsRepository
 import com.example.inventory.data.SettingsRep
 import com.example.inventory.data.isValidEmail
 import com.example.inventory.data.isValidPhone
+import kotlinx.coroutines.launch
 import java.text.NumberFormat
 
 /**
@@ -52,7 +56,9 @@ class ItemEntryViewModel(private val itemsRepository: ItemsRepository) : ViewMod
      */
     suspend fun saveItem() {
         if (validateInput()) {
-            itemsRepository.insertItem(itemUiState.itemDetails.toItem())
+            val item = itemUiState.itemDetails.toItem()
+            item.creationMethod = "manual"
+            itemsRepository.insertItem(item)
         }
     }
 
@@ -65,6 +71,16 @@ class ItemEntryViewModel(private val itemsRepository: ItemsRepository) : ViewMod
 
     fun setDefault(): Boolean { return settRep.setDefault()}
     fun default(): Int { return settRep.default()}
+
+    fun DownloadFromEncryptedFile(uri: Uri){
+        val encRepo: EncryptedFileRep = EncryptedFileRep(uri)
+        val item = encRepo.ReadFromFile()
+        if (item != null){
+            viewModelScope.launch {
+                itemsRepository.insertItem(item)
+            }
+        }
+    }
 }
 
 /**
@@ -83,6 +99,7 @@ data class ItemDetails(
     val agentName: String = "",
     val agentMail: String = "",
     val agentPhone: String = "",
+    val creationMethod: String = ""
 )
 
 /**
@@ -98,6 +115,7 @@ fun ItemDetails.toItem(): Item = Item(
     agentName = agentName,
     agentMail = agentMail,
     agentPhone = agentPhone,
+    creationMethod = creationMethod
 )
 
 fun Item.formatedPrice(): String {
@@ -122,5 +140,6 @@ fun Item.toItemDetails(): ItemDetails = ItemDetails(
     quantity = quantity.toString(),
     agentName = agentName.toString(),
     agentMail = agentMail.toString(),
-    agentPhone = agentPhone.toString()
+    agentPhone = agentPhone.toString(),
+    creationMethod = creationMethod.toString()
 )

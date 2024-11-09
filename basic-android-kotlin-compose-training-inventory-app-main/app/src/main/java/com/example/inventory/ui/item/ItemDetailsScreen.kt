@@ -17,6 +17,9 @@
 package com.example.inventory.ui.item
 
 import android.app.Activity
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -62,6 +65,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.inventory.InventoryTopAppBar
 import com.example.inventory.R
+import com.example.inventory.appContext
 import com.example.inventory.data.Item
 import com.example.inventory.ui.AppViewModelProvider
 import com.example.inventory.ui.navigation.NavigationDestination
@@ -111,11 +115,22 @@ fun ItemDetailsScreen(
             }
         },
         modifier = modifier,
-    ) { innerPadding ->
+    )
+
+    { innerPadding ->
+        val saveFileLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("text/plain")) { uri: Uri? ->
+            uri?.let {
+                viewModel.saveToEncryptedFile(uri)
+            }
+        }
         ItemDetailsBody(
             itemDetailsUiState = uiState.value,
             onSellItem = { viewModel.reduceQuantityByOne() },
-            shareItemButtonClicked = {viewModel.ShareToSocialNets(context)}, //!!!!!******TODO
+            shareItemButtonClicked = {viewModel.ShareToSocialNets(context)},
+
+
+
+            downloadItemButtonClicked = {saveFileLauncher.launch("item.txt")},
             onDelete = {
                 // Note: If the user rotates the screen very fast, the operation may get cancelled
                 // and the item may not be deleted from the Database. This is because when config
@@ -143,6 +158,7 @@ private fun ItemDetailsBody(
     itemDetailsUiState: ItemDetailsUiState,
     onSellItem: () -> Unit,
     shareItemButtonClicked: () -> Unit,
+    downloadItemButtonClicked: () -> Unit,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ItemDetailsViewModel
@@ -171,6 +187,15 @@ private fun ItemDetailsBody(
             enabled = !viewModel.restrictedShare()
         ) {
             Text(stringResource(R.string.share))
+        }
+
+        Button(
+            onClick = downloadItemButtonClicked,
+            modifier = Modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.small,
+            enabled = !viewModel.restrictedShare()
+        ) {
+            Text(stringResource(R.string.save))
         }
 
         OutlinedButton(
@@ -271,6 +296,16 @@ fun ItemDetails(
                     )
                 )
             )
+            ItemDetailsRow(
+                labelResID = R.string.creation_method,
+                itemDetail = item.creationMethod,
+                modifier = Modifier.padding(
+                    horizontal = dimensionResource(
+                        id = R.dimen
+                            .padding_medium
+                    )
+                )
+            )
         }
 
     }
@@ -313,6 +348,6 @@ fun ItemDetailsScreenPreview() {
     InventoryTheme {
         ItemDetailsBody(ItemDetailsUiState(
             outOfStock = true, itemDetails = ItemDetails(1, "Pen", "$100", "10")
-        ), onSellItem = {}, onDelete = {}, shareItemButtonClicked = {}, viewModel = viewModel(factory = AppViewModelProvider.Factory))
+        ), onSellItem = {}, onDelete = {}, shareItemButtonClicked = {}, viewModel = viewModel(factory = AppViewModelProvider.Factory), downloadItemButtonClicked = {})
     }
 }

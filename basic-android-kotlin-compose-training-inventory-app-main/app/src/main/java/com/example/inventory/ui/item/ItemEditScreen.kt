@@ -76,6 +76,7 @@ fun ItemEditScreen(
                     navigateBack()
                 }
             },
+            onDownloadClick = {},
             modifier = Modifier
                 .padding(
                     start = innerPadding.calculateStartPadding(LocalLayoutDirection.current),

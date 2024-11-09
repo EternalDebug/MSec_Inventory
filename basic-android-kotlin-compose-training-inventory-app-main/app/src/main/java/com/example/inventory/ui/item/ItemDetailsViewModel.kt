@@ -18,9 +18,11 @@ package com.example.inventory.ui.item
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.inventory.data.EncryptedFileRep
 import com.example.inventory.data.Item
 import com.example.inventory.data.ItemsRepository
 import com.example.inventory.data.SettingsRep
@@ -75,7 +77,7 @@ class ItemDetailsViewModel(
                 item.name + "\n" + item.price.toString() + "\n" +
                 item.quantity.toString() + "\n" +
                 item.agentName + "\n" + item.agentMail + "\n" +
-                item.agentPhone
+                item.agentPhone + "\n" + item.creationMethod
 
         val sendIntent: Intent = Intent().apply {
             action = Intent.ACTION_SEND
@@ -100,6 +102,11 @@ class ItemDetailsViewModel(
 
     fun hideData(): Boolean { return settRep.hideData()}
     fun restrictedShare(): Boolean {return settRep.restrictedShare()}
+
+    fun saveToEncryptedFile(uri: Uri){
+        val encRepo: EncryptedFileRep = EncryptedFileRep(uri)
+        encRepo.WriteToFile(uiState.value.itemDetails.toItem())
+    }
 }
 
 /**

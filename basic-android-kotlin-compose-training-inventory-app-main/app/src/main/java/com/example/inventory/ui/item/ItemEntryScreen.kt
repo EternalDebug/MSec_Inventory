@@ -16,6 +16,8 @@
 
 package com.example.inventory.ui.item
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -79,6 +81,12 @@ fun ItemEntryScreen(
             )
         }
     ) { innerPadding ->
+        val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { selectedUri ->
+            if (selectedUri != null) {
+                viewModel.DownloadFromEncryptedFile(selectedUri)
+                navigateBack()
+            }
+        }
         ItemEntryBody(
             itemUiState = viewModel.itemUiState,
             onItemValueChange = viewModel::updateUiState,
@@ -92,6 +100,11 @@ fun ItemEntryScreen(
                     navigateBack()
                 }
             },
+
+            onDownloadClick = {
+                launcher.launch("text/plain")
+            },
+
             modifier = Modifier
                 .padding(
                     start = innerPadding.calculateStartPadding(LocalLayoutDirection.current),
@@ -109,6 +122,7 @@ fun ItemEntryBody(
     itemUiState: ItemUiState,
     onItemValueChange: (ItemDetails) -> Unit,
     onSaveClick: () -> Unit,
+    onDownloadClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -127,6 +141,15 @@ fun ItemEntryBody(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = stringResource(R.string.save_action))
+        }
+
+        Button(
+            onClick = onDownloadClick,
+            enabled = true,
+            shape = MaterialTheme.shapes.small,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = stringResource(R.string.download))
         }
     }
 }
@@ -249,6 +272,6 @@ private fun ItemEntryScreenPreview() {
             ItemDetails(
                 name = "Item name", price = "10.00", quantity = "5"
             )
-        ), onItemValueChange = {}, onSaveClick = {})
+        ), onItemValueChange = {}, onSaveClick = {}, onDownloadClick = {})
     }
 }

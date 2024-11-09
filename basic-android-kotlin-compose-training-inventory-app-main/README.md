@@ -1,7 +1,7 @@
 Inventory app
 MSec Lab:
 2: completed 100%
-3: started 
+3: started 95% Searching Bugs
 4: in query
 ==================================
 

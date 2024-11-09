@@ -44,5 +44,8 @@
     <string name="required_fields">*required fields</string>
     <string name="hidden_data">ДАННЫЕ УДАЛЕНЫ</string>
     <string name="settings">Settings</string>
+    <string name="creation_method">Creation Method</string>
+    <string name="save">Save</string>
+    <string name="download">Download</string>
 
 </resources>
