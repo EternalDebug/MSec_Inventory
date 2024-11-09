@@ -20,6 +20,11 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.security.crypto.MasterKeys
+import net.sqlcipher.database.SQLiteDatabase
+import net.sqlcipher.database.SupportFactory
+import com.commonsware.cwac.saferoom.SQLCipherUtils.encrypt
+import com.commonsware.cwac.saferoom.SQLCipherUtils.getDatabaseState
 
 /**
  * Database class with a singleton Instance object.
@@ -32,10 +37,19 @@ abstract class InventoryDatabase : RoomDatabase() {
     companion object {
         @Volatile
         private var Instance: InventoryDatabase? = null
+        private val masterKey = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
+        private val passphrase: ByteArray = SQLiteDatabase.getBytes(masterKey.toCharArray())
+        private val factory = SupportFactory(passphrase)
 
         fun getDatabase(context: Context): InventoryDatabase {
             // if the Instance is not null, return it, otherwise create a new database instance.
             return Instance ?: synchronized(this) {
+
+                val state = getDatabaseState(context, "item_database")
+                if (state.toString() == "UNENCRYPTED"){
+                    encrypt(context, "item_database", passphrase)
+                }
+
                 Room.databaseBuilder(context, InventoryDatabase::class.java, "item_database")
                     /**
                      * Setting this option in your app's database builder means that Room
@@ -43,6 +57,7 @@ abstract class InventoryDatabase : RoomDatabase() {
                      * attempts to perform a migration with no defined migration path.
                      */
                     .fallbackToDestructiveMigration()
+                    .openHelperFactory(factory)
                     .build()
                     .also { Instance = it }
             }
